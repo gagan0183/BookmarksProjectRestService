@@ -16,7 +16,7 @@ public class BookmarkResource extends ResourceSupport {
 		this.add(new Link(bookmark.getUri(), "bookmark-uri"));
 		this.add(ControllerLinkBuilder.linkTo(BookmarkRestController.class, username).withRel("bookmarks"));
 		this.add(ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(BookmarkRestController.class, username)
-				.readBookmark(username, bookmark.getId())).withSelfRel());
+				.readBookmark(null, bookmark.getId())).withSelfRel());
 	}
 
 	public Bookmark getBookmark() {

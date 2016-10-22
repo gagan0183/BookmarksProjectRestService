@@ -1,5 +1,6 @@
 package bookmarks.controller;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +25,7 @@ import bookmarks.repository.AccountRepository;
 import bookmarks.repository.BookmarkRepository;
 
 @RestController
-@RequestMapping("/{userId}/bookmarks")
+@RequestMapping("/bookmarks")
 public class BookmarkRestController {
 	@Autowired
 	private AccountRepository accountRepository;
@@ -32,7 +33,8 @@ public class BookmarkRestController {
 	private BookmarkRepository bookmarkRepository;
 
 	@RequestMapping(method = RequestMethod.POST)
-	ResponseEntity<?> add(@PathVariable("userId") String userId, @RequestBody Bookmark input) {
+	ResponseEntity<?> add(Principal principal, @RequestBody Bookmark input) {
+		String userId = principal.getName();
 		validateUser(userId);
 		Account account = accountRepository.findByUsername(userId);
 		Bookmark bookmark = new Bookmark(account, input.getUri(), input.getDescription());
@@ -46,13 +48,15 @@ public class BookmarkRestController {
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public BookmarkResource readBookmark(@PathVariable String userId, @PathVariable Long id) {
+	public BookmarkResource readBookmark(Principal principal, @PathVariable Long id) {
+		String userId = principal.getName();
 		validateUser(userId);
 		return new BookmarkResource(this.bookmarkRepository.findOne(id));
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public Resources<BookmarkResource> readBookmarks(@PathVariable String userId) {
+	public Resources<BookmarkResource> readBookmarks(Principal principal) {
+		String userId = principal.getName();
 		validateUser(userId);
 		Collection<Bookmark> bookmarks = this.bookmarkRepository.findByAccountUsername(userId);
 		List<BookmarkResource> bookmarkResources = new ArrayList<>();
